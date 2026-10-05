@@ -134,7 +134,7 @@ footer{text-transform:uppercase;letter-spacing:.14em;font-size:.7rem;border-top:
 .ph{margin:20px 0 8px;color:#ead9a6;text-transform:uppercase;letter-spacing:.05em;font-size:1.05rem}
 .pm{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;margin:8px 0}.pnm{font-size:1.05rem;margin-right:8px}.pm .mut{color:#6e5f3d}
 #padd .pwi,#padd select{flex:1;min-width:140px}
-</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script></head><body><nav class="nb"><div class="brand"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><polygon fill="#e7b84a" points="20,2 24,14 36,8 28,18 38,22 26,24 30,36 20,28 10,36 14,24 2,22 12,18 4,8 16,14"/><path d="M21 12l-5 9h4l-2 8 7-11h-4z" fill="#0b1320"/></svg><div><b>CODEX MÉDICAL</b><small>HÔPITAL • SOINS • FORMATION</small></div></div><div class="tabs"><button class="chip on" id="t1">📋 Fiches de soins</button><button class="chip" id="t2">🎓 Autres : hôpital &amp; cours</button><button class="chip" id="t3">🗂️ Dossiers</button><button class="chip" id="t4">👥 Personnel</button></div><button class="tg" id="tg" hidden>◐</button></nav>
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script></head><body><div id="fatal" style="display:none;position:fixed;inset:0;z-index:99999;background:#0b1320;color:#f1e6c2;padding:30px;font:16px system-ui;overflow:auto"><h2 style="color:#e7b84a">Erreur du site</h2><p id="fatalmsg">Une erreur JavaScript empêche le site de démarrer.</p><p>Fais une capture de cet écran et envoie-la-moi.</p></div><script>window.addEventListener("error",function(e){var x=document.getElementById("fatal");if(x){x.style.display="block";document.getElementById("fatalmsg").textContent="Erreur : "+(e.message||"inconnue")+" — ligne "+(e.lineno||"?")}});window.addEventListener("unhandledrejection",function(e){var x=document.getElementById("fatal");if(x){x.style.display="block";document.getElementById("fatalmsg").textContent="Erreur : "+(e.reason&&e.reason.message?e.reason.message:String(e.reason))}});</script><nav class="nb"><div class="brand"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><polygon fill="#e7b84a" points="20,2 24,14 36,8 28,18 38,22 26,24 30,36 20,28 10,36 14,24 2,22 12,18 4,8 16,14"/><path d="M21 12l-5 9h4l-2 8 7-11h-4z" fill="#0b1320"/></svg><div><b>CODEX MÉDICAL</b><small>HÔPITAL • SOINS • FORMATION</small></div></div><div class="tabs"><button class="chip on" id="t1">📋 Fiches de soins</button><button class="chip" id="t2">🎓 Autres : hôpital &amp; cours</button><button class="chip" id="t3">🗂️ Dossiers</button><button class="chip" id="t4">👥 Personnel</button></div><button class="tg" id="tg" hidden>◐</button></nav>
 
 <div id="gate" hidden><div class="gc" style="display:block;max-width:440px;width:100%"><h3 style="margin:0 0 6px">🔒 Accès réservé</h3><p style="margin:0 0 12px">Les fiches de soins et les cours sont accessibles avec un compte disposant de la permission correspondante.</p><button class="chip on" id="gl0" style="margin-top:10px">Se connecter</button></div></div><header><div class="w">
 <h1>Codex <span>médical</span></h1>
@@ -540,11 +540,11 @@ const HK=3072667897901023;
 const cyr=s=>{let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return 4294967296*(2097151&h2)+(h1>>>0)};
 const CL=[["hatori","Hatori","🕷️","#8fd13a","#4b1f78"],["arashi","Arashi","⚡","#3b82f6","#0a1230"],["yotsuki","Yotsuki","🔥","#f0a030","#7a3b0b"],["chinoike","Chinoike","🩸","#e0223f","#5a0612"],["burashi","Burashi","🌿","#2fc4b2","#0d4a52"],["sans","Sans clan","🍃","#9aa3b2","#3a4254"]];
 const GS=["A+","A-","B+","B-","AB+","AB-","O+","O-"];
-let DS=[],ST=null,curC="hatori",dq="",m3=$("m3"),t3=$("t3"),EDIT=null,EDM=(()=>{try{return sessionStorage.getItem("ed")==="1"}catch(_){return false}})();
+var DS=[],ST=null,curC="hatori",dq="",m3=$("m3"),t3=$("t3"),EDIT=null,EDM=(()=>{try{return sessionStorage.getItem("ed")==="1"}catch(_){return false}})();
 var cur=3;
 function show(n){
   cur=n;
-  const ficheOK=hasAnyFiche(), coursOK=hasAnyCourse();
+  const ficheOK=(typeof hasAnyFiche==="function")&&hasAnyFiche(), coursOK=(typeof hasAnyCourse==="function")&&hasAnyCourse();
   const allow=n===1?ficheOK:n===2?coursOK:n===3?can("view_dossiers"):n===4?can("view_personnel"):false;
   m1.hidden=n!==1||!ficheOK;
   m2.hidden=n!==2||!coursOK;
@@ -557,12 +557,9 @@ function show(n){
     t.classList.toggle("on",i+1===n);
   });
   if(!allow){
-    m1.hidden=true; m2.hidden=true; m3.hidden=true; $("m4").hidden=true;
-    $("gate").hidden=false;
-    window.scrollTo(0,0);
-    return;
+    const first=ficheOK?1:(coursOK?2:(can("view_dossiers")?3:4));
+    if(first!==n){cur=first;return show(first)}
   }
-  $("gate").hidden=true;
   window.scrollTo(0,0);
   if(n===3)gate();
   if(n===4)initP();
@@ -601,7 +598,7 @@ show(4);
 $("edm").onclick=()=>{if(EDM){EDM=false;try{sessionStorage.removeItem("ed")}catch(_){}renderD();renderP();return}$("edp").hidden=!$("edp").hidden};
 $("edb").onclick=()=>{if(cyr($("edw").value.trim())===HE){EDM=true;try{sessionStorage.setItem("ed","1")}catch(_){}$("edw").value="";$("edp").hidden=true;$("edmsg").textContent="";renderD();renderP()}else $("edmsg").textContent="Mot de passe de modification incorrect."};
 $("edw").addEventListener("keydown",e=>{if(e.key==="Enter")$("edb").click()});
-let PL=[],PS=null,pq="";
+var PL=[],PS=null,pq="";
 async function initP(){if(PS)return;try{const db=window.claude&&await claude.use("db");if(db){PS={set:(i,o)=>db.doc("personnel/"+i).set(o),del:i=>db.doc("personnel/"+i).delete()};db.collection("personnel").onSnapshot(s=>{PL=s.docs.map(d=>({...d.data(),id:d.id}));renderP()},()=>ploc());return}}catch(_){}ploc()}
 function ploc(){let a=[];try{a=JSON.parse(localStorage.getItem("pers")||"[]")}catch(_){}PL=a;const sv=()=>{try{localStorage.setItem("pers",JSON.stringify(PL))}catch(_){}};PS={set:async(i,o)=>{PL=PL.filter(x=>x.id!==i).concat([{...o,id:i}]);sv();renderP()},del:async i=>{PL=PL.filter(x=>x.id!==i);sv();renderP()}};$("pmsg").textContent="Mode local : le personnel est enregistré uniquement sur cet appareil.";renderP()}
 function renderP(){
@@ -629,11 +626,11 @@ var sb=null,PERM=new Set(),ME=null,FICHE_ACCESS=new Set(),COURSE_ACCESS=new Set(
 function toEmail(u){return u.trim().toLowerCase()+"@hopital-kumo.local"}
 function can(p){return !!PERM&&PERM.has(p)}
 function ficheKey(title){return "fiche:"+String(title||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}
-function canFiche(title){return ALL_FICHES || FICHE_ACCESS.has(ficheKey(title))}
-function hasAnyFiche(){return ALL_FICHES || FICHE_ACCESS.size>0}
+function canFiche(title){return ALL_FICHES===true || (FICHE_ACCESS instanceof Set && FICHE_ACCESS.has(ficheKey(title)))}
+function hasAnyFiche(){return ALL_FICHES===true || (FICHE_ACCESS instanceof Set && FICHE_ACCESS.size>0)}
 function courseKey(g){return "course:chapitre-"+String(g)}
-function canCourse(g){return ALL_COURSES || COURSE_ACCESS.has(courseKey(g))}
-function hasAnyCourse(){return ALL_COURSES || COURSE_ACCESS.size>0}
+function canCourse(g){return ALL_COURSES===true || (COURSE_ACCESS instanceof Set && COURSE_ACCESS.has(courseKey(g)))}
+function hasAnyCourse(){return ALL_COURSES===true || (COURSE_ACCESS instanceof Set && COURSE_ACCESS.size>0)}
 function ok(){return hasAnyFiche()}
 function cfgOK(){return !/VOTRE/.test(SUPABASE_URL+SUPABASE_ANON_KEY)&&!!window.supabase}
 // ---- interface de connexion
@@ -702,16 +699,16 @@ $("apc").onclick=()=>$("apm").hidden=true;
 // ---- démarrage
 if(cfgOK()){
   sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-  // État initial : on affiche une page d'accueil au lieu de masquer tout le site.
   ME=null; PERM=new Set(); FICHE_ACCESS=new Set(); COURSE_ACCESS=new Set();
   ALL_FICHES=false; ALL_COURSES=false;
   lb.textContent="👤 Connexion";
   ab.hidden=true;
-  show(4);
+  // État initial : le site reste visible pendant le chargement de Supabase.
+  m1.hidden=true; m2.hidden=true; m3.hidden=true; $("m4").hidden=true; $("gate").hidden=false;
   sb.auth.onAuthStateChange(()=>{loadSession()});
   loadSession();
 }else{
-  show(4);
+  $("gate").hidden=false;
   $("dmsg").textContent=$("pmsg").textContent="Site non configuré : renseignez SUPABASE_URL et SUPABASE_ANON_KEY en haut du script (voir README).";
 }
 </script></body></html>
