@@ -565,7 +565,6 @@ function show(n){
   if(n===4)initP();
 }
 t1.onclick=()=>show(1);t2.onclick=()=>show(2);t3.onclick=()=>show(3);
-function ok(){try{return sessionStorage.getItem("mj")==="1"}catch(_){return false}}
 function gate(){$("lock").hidden=true;$("dos").hidden=false;initD()}
 $("pwb").onclick=()=>{if(cyr($("pw").value.trim())===HK){try{sessionStorage.setItem("mj","1")}catch(_){}$("pw").value="";$("pwm").textContent="";gate()}else $("pwm").textContent="Mot de passe incorrect."};
 $("pw").addEventListener("keydown",e=>{if(e.key==="Enter")$("pwb").click()});
@@ -595,7 +594,7 @@ $("sv").onclick=()=>{if(!EDM)return;const o={};Object.entries(F).forEach(([k,id]
 
 const HE=5736749498209180;
 function lockUI(){show(cur)}
-show(3);
+show(4);
 $("edm").onclick=()=>{if(EDM){EDM=false;try{sessionStorage.removeItem("ed")}catch(_){}renderD();renderP();return}$("edp").hidden=!$("edp").hidden};
 $("edb").onclick=()=>{if(cyr($("edw").value.trim())===HE){EDM=true;try{sessionStorage.setItem("ed","1")}catch(_){}$("edw").value="";$("edp").hidden=true;$("edmsg").textContent="";renderD();renderP()}else $("edmsg").textContent="Mot de passe de modification incorrect."};
 $("edw").addEventListener("keydown",e=>{if(e.key==="Enter")$("edb").click()});
@@ -647,7 +646,7 @@ const ab=document.createElement("button");ab.className="chip";ab.id="ab";ab.text
 $("gate").innerHTML='<div class="gc" style="display:block;max-width:440px;width:100%"><h3 style="margin:0 0 6px">🔒 Accès réservé</h3><p style="margin:0 0 12px">Connectez-vous avec un compte autorisé pour voir les fiches de soins et les cours.</p><button class="chip on" id="gl">Se connecter</button></div>';
 ["edm","pedm","edp","pedp"].forEach(i=>$(i).hidden=true);
 const openLg=()=>{$("lgm").textContent="";lg.hidden=false;$("lgu").focus()};
-lb.onclick=()=>ME?sb.auth.signOut():openLg();$("gl").onclick=openLg;$("lgc").onclick=()=>lg.hidden=true;$("cmc").onclick=()=>cm.hidden=true;
+lb.onclick=()=>ME?sb.auth.signOut().then(()=>show(4)):openLg();$("gl").onclick=openLg;$("lgc").onclick=()=>lg.hidden=true;$("cmc").onclick=()=>cm.hidden=true;
 $("lk").onclick=$("lk2").onclick=()=>{if(ME)sb.auth.signOut()};
 $("lgb").onclick=async()=>{if(!cfgOK()){$("lgm").textContent="Site non configuré (clés Supabase manquantes).";return}const{error}=await sb.auth.signInWithPassword({email:toEmail($("lgu").value),password:$("lgp").value});if(error){$("lgm").textContent="Identifiant ou mot de passe incorrect.";return}$("lgp").value="";lg.hidden=true};
 $("lgp").addEventListener("keydown",e=>{if(e.key==="Enter")$("lgb").click()});
@@ -698,5 +697,18 @@ $("cml").addEventListener("change",async e=>{const s=e.target.closest("select");
 $("aps").onclick=async()=>{if(!ACCESS_USER_ID||!ACCESS_KIND)return;const keys=[...document.querySelectorAll("#apl input[data-access]:checked")].map(x=>x.dataset.access);$("apmg").textContent="Enregistrement...";let r;if(ACCESS_KIND==='fiche'){r=await sb.from("fiche_access").delete().eq("user_id",ACCESS_USER_ID);if(!r.error&&keys.length)r=await sb.from("fiche_access").insert(keys.map(fiche_key=>({user_id:ACCESS_USER_ID,fiche_key})));}else{r=await sb.from("course_access").delete().eq("user_id",ACCESS_USER_ID);if(!r.error&&keys.length)r=await sb.from("course_access").insert(keys.map(course_key=>({user_id:ACCESS_USER_ID,course_key})));}if(r.error){$("apmg").textContent="Erreur : "+r.error.message;return}$("apmg").style.color="#176b3a";$("apmg").textContent=keys.length+(ACCESS_KIND==='fiche'?" fiche(s)":" cours")+" autorisé(s).";};
 $("apc").onclick=()=>$("apm").hidden=true;
 // ---- démarrage
-if(cfgOK()){sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);sb.auth.onAuthStateChange(()=>{loadSession()});loadSession()}else{show(cur);$("dmsg").textContent=$("pmsg").textContent="Site non configuré : renseignez SUPABASE_URL et SUPABASE_ANON_KEY en haut du script (voir README)."}
+if(cfgOK()){
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  // État initial : on affiche une page d'accueil au lieu de masquer tout le site.
+  ME=null; PERM=new Set(); FICHE_ACCESS=new Set(); COURSE_ACCESS=new Set();
+  ALL_FICHES=false; ALL_COURSES=false;
+  lb.textContent="👤 Connexion";
+  ab.hidden=true;
+  show(4);
+  sb.auth.onAuthStateChange(()=>{loadSession()});
+  loadSession();
+}else{
+  show(4);
+  $("dmsg").textContent=$("pmsg").textContent="Site non configuré : renseignez SUPABASE_URL et SUPABASE_ANON_KEY en haut du script (voir README).";
+}
 </script></body></html>
