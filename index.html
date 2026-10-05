@@ -557,9 +557,12 @@ function show(n){
     t.classList.toggle("on",i+1===n);
   });
   if(!allow){
-    const first=ficheOK?1:(coursOK?2:(can("view_dossiers")?3:4));
-    if(first!==n){cur=first;return show(first)}
+    m1.hidden=true; m2.hidden=true; m3.hidden=true; $("m4").hidden=true;
+    $("gate").hidden=false;
+    window.scrollTo(0,0);
+    return;
   }
+  $("gate").hidden=true;
   window.scrollTo(0,0);
   if(n===3)gate();
   if(n===4)initP();
