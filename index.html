@@ -644,17 +644,17 @@ function courseEntries(g){
 }
 function formationData(){
   const grades=[5,4,3,2,1,0].map(g=>{
-    const courses=courseEntries(g);
+    // La formation d'un compte contient uniquement les cours qui lui ont été attribués.
+    const courses=courseEntries(g).filter(course=>canCourse(g,course.i));
     const total=courses.length;
     let done=0;
     courses.forEach(course=>{ if(courseDone(g,course)) done++; });
-    // Une validation = un seul cours. Le compteur ne peut jamais dépasser le total.
     done=Math.max(0,Math.min(done,total));
     const pct=total>0 ? Math.round((done*100)/total) : 0;
     return {g,total,done,pct:Math.max(0,Math.min(100,pct))};
   });
 
-  // GLOBAL = somme des cours de chaque grade, jamais somme des pourcentages.
+  // GLOBAL = cours attribués au compte, jamais somme des pourcentages.
   const total=grades.reduce((sum,grade)=>sum+grade.total,0);
   const done=grades.reduce((sum,grade)=>sum+grade.done,0);
   const pct=total>0 ? Math.round((done*100)/total) : 0;
@@ -674,7 +674,7 @@ function renderFormation(){
   }).join("");
   el.innerHTML=`<div class="formation-shell">
     <div class="formation-head">
-      <div><h3 style="margin:0">🎓 Progression de la formation</h3><p class="mut" style="margin:4px 0 0">Chaque grade est calculé séparément. Le global est calculé sur tous les cours.</p></div>
+      <div><h3 style="margin:0">🎓 Progression de la formation</h3><p class="mut" style="margin:4px 0 0">Seuls les cours attribués à ce compte sont comptés.</p></div>
       <div class="formation-total"><strong>${d.pct}%</strong><span>global · ${d.done} / ${d.total} cours</span></div>
     </div>
     <div class="formation-bar"><i style="width:${d.pct}%"></i></div>
