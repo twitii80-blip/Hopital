@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"><title>Codex médical – Hôpital de Kumo (version Supabase)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"><title>Codex Hopital</title>
 <style>
 :root{--bg:#f3f7f4;--card:#fff;--tx:#13201a;--mut:#5b6b62;--ac:#1f9d61;--bd:#dce6df;--hero:#d9f2e4;--l:#1f9d61;--m:#c98a0a;--g:#e0562f;--c:#d12a4b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1512;--card:#17201a;--tx:#e8efe9;--mut:#93a39a;--ac:#4fd18b;--bd:#27332b;--hero:#16291f;--l:#4fd18b;--m:#f2b84b;--g:#ff7a59;--c:#ff5c7c}}
@@ -643,8 +643,9 @@ function courseEntries(g){
 function formationData(){
   const grades=[5,4,3,2,1,0].map(g=>{
     const rows=courseEntries(g).filter(o=>canCourse(g,o.i));
-    const done=rows.filter(o=>COURSE_DONE.has(courseKey(g,o.i))).length;
-    return {g,total:rows.length,done,pct:rows.length?Math.round(done/rows.length*100):0};
+    const total=rows.length;
+    const done=rows.reduce((n,o)=>n+(COURSE_DONE.has(courseKey(g,o.i))?1:0),0);
+    return {g,total,done,pct:total?Math.round(done/total*100):0};
   });
   const total=grades.reduce((n,x)=>n+x.total,0),done=grades.reduce((n,x)=>n+x.done,0);
   return {grades,total,done,pct:total?Math.round(done/total*100):0};
@@ -652,8 +653,9 @@ function formationData(){
 function renderFormation(){
   const el=$("formation"); if(!el)return;
   const d=formationData();
-  const cards=d.grades.map(x=>{const g=G[x.g];const colors=["#d9a83b","#4b8cff","#55c47a","#d96b3b","#a878d9","#e15b78"];return `<div class="formation-card" style="--grade:${colors[x.g]}"><div class="ft"><span class="fg">${esc(g[1])} ${esc(g[0])}</span><span class="fp">${x.pct}%</span></div><small>${x.done} / ${x.total} cours terminés</small><div class="mini"><i style="width:${x.pct}%"></i></div></div>`}).join("");
-  el.innerHTML=`<div class="formation-shell"><div class="formation-head"><div><h3 style="margin:0">🎓 Progression de la formation</h3><p class="mut" style="margin:4px 0 0">Seuls les cours accessibles à ce compte sont comptabilisés.</p></div><div class="formation-total">${d.pct}%<small>${d.done} / ${d.total} cours</small></div></div><div class="formation-bar"><i style="width:${d.pct}%"></i></div><div class="formation-grid">${cards||'<div class="formation-empty">Aucun cours accessible pour ce compte.</div>'}</div></div>`;
+  const colors=["#d9a83b","#4b8cff","#55c47a","#d96b3b","#a878d9","#e15b78"];
+  const cards=d.grades.map(x=>{const g=G[x.g];return `<div class="formation-card" style="--grade:${colors[x.g]}"><div class="ft"><span class="fg">${esc(g[1])} ${esc(g[0])}</span><span class="fp">${x.pct}%</span></div><div class="fcount"><strong>${x.done}</strong><span> / ${x.total} cours</span></div><div class="mini"><i style="width:${x.pct}%"></i></div></div>`}).join("");
+  el.innerHTML=`<div class="formation-shell"><div class="formation-head"><div><h3 style="margin:0">🎓 Progression de la formation</h3><p class="mut" style="margin:4px 0 0">Chaque cours coché compte immédiatement.</p></div><div class="formation-total"><strong>${d.done} / ${d.total}</strong><span>${d.pct}%</span></div></div><div class="formation-bar"><i style="width:${d.pct}%"></i></div><div class="formation-grid">${cards||'<div class="formation-empty">Aucun cours accessible pour ce compte.</div>'}</div></div>`;
 }
 function ok(){return hasAnyFiche()}
 function cfgOK(){return !/VOTRE/.test(SUPABASE_URL+SUPABASE_ANON_KEY)&&!!window.supabase}
@@ -737,9 +739,7 @@ async function setCourseDone(key,done){
     if(r.error)throw r.error;
     COURSE_DONE.delete(key);
   }
-  drawK();
   renderFormation();
-  renderP();
 }
 $("kl").addEventListener("change",e=>{
   const x=e.target.closest("input[data-course-done]");if(!x)return;
