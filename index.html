@@ -516,7 +516,7 @@ const quiz=Q.map((q,i)=>`<div class="qq"><h4>${i+1}. ${esc(q[0])}</h4>${q[1].map
 L.push(["Quiz de fin de cours",`<p class="in">${prof?"Mode professeur : les bonnes réponses sont indiquées par ✔ avec leur explication.":"8 questions. Cliquez une réponse : elle devient verte si elle est juste, rouge sinon, avec une explication."}</p>${quiz}`]);
 const ex=prof?`<p class="in">Grille de notation sur 20. Seuil de réussite : 14/20. Chaque critère rapporte 1 point.</p>${EP.map(e=>`<h4>${esc(e[0])} (${e[2].reduce((a,c)=>a+c[1],0)} pts)</h4><p class="tb">${esc(e[1])}</p><ul>${e[2].map(c=>`<li>${esc(c[0])} : ${c[1]} pt</li>`).join("")}</ul>`).join("")}<div class="tip">⛔ <b>Fautes éliminatoires :</b> ${ELIM.map(esc).join(" ; ")}.</div>`:`<p class="in">L'examen comprend 3 épreuves pratiques et une observation générale, notées sur 20 (seuil : 14/20). Coche ce que vous maîtrisez avant de vous présenter.</p>${EP.slice(0,3).map(e=>`<p class="tb"><b>${esc(e[0])}</b> : ${esc(e[1])}</p>`).join("")}<div class="exc">${EX.map(e=>`<label class="ck"><input type="checkbox" onchange="exn()"> ${esc(e)}</label>`).join("")}<p class="tb"><b id="exc">0 / ${EX.length}</b></p></div>`;
 L.push(["Examen pour passer Infirmier",ex]);return L}
-function drawK(){const order=[5,4,3,2,1,0];$("kl").innerHTML=order.filter(g=>gsel<0||g===gsel).map(g=>{const c=CH[g];let L=g===5?SX():g===4?IX():g===3?MX3():K.map((k,i)=>({k,i})).filter(o=>o.k[0]===g).map(({k,i})=>{const x=X[i];return [k[1],`<p class="in">${esc(k[2])}</p>${x[0].map(p=>`<p class="tb">${esc(p)}</p>`).join("")}<p class="tb">${esc("Concrètement, on procède dans cet ordre : "+k[3].map(lc).join(", puis ")+".")}</p><p class="tb">${esc("Quelques erreurs reviennent souvent : "+jn(x[1].map(lc))+".")}</p>`]});const all=L;L=all.map((item,i)=>({item,i})).filter(o=>canCourse(g,o.i)).map(o=>o.item);if(!L.length)return "";return `<div class="chp"><div class="chh"><span class="rk">${c[0]} · ${G[g][0]}</span><h3>${c[1]}</h3><p>${c[2]}</p></div><nav class="som"><b>Cours accessibles</b>${L.map((s,j)=>`<button class="chip" onclick="document.getElementById('s${g}-${j}').scrollIntoView({behavior:'smooth'})">${j+1}. ${esc(s[0])}</button>`).join("")}</nav>${L.map((s,j)=>{const entry=courseEntries(g).filter(o=>canCourse(g,o.i))[j];const key=entry?courseProgressKey(g,entry.title):"";const done=entry&&courseDone(g,entry);return `<section class="mod" id="s${g}-${j}"><h3>${j+1}. ${esc(s[0])}</h3><label class="ck" style="display:inline-flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" data-course-done="${esc(key)}" ${done?"checked":""}> Cours terminé</label>${s[1]}</section>`}).join("")}</div>`}).join("")}
+function drawK(){const order=[5,4,3,2,1,0];$("kl").innerHTML=order.filter(g=>gsel<0||g===gsel).map(g=>{const c=CH[g];let L=g===5?SX():g===4?IX():g===3?MX3():K.map((k,i)=>({k,i})).filter(o=>o.k[0]===g).map(({k,i})=>{const x=X[i];return [k[1],`<p class="in">${esc(k[2])}</p>${x[0].map(p=>`<p class="tb">${esc(p)}</p>`).join("")}<p class="tb">${esc("Concrètement, on procède dans cet ordre : "+k[3].map(lc).join(", puis ")+".")}</p><p class="tb">${esc("Quelques erreurs reviennent souvent : "+jn(x[1].map(lc))+".")}</p>`]});const all=L;L=all.map((item,i)=>({item,i})).filter(o=>canCourse(g,o.i)).map(o=>o.item);if(!L.length)return "";return `<div class="chp"><div class="chh"><span class="rk">${c[0]} · ${G[g][0]}</span><h3>${c[1]}</h3><p>${c[2]}</p></div><nav class="som"><b>Cours accessibles</b>${L.map((s,j)=>`<button class="chip" onclick="document.getElementById('s${g}-${j}').scrollIntoView({behavior:'smooth'})">${j+1}. ${esc(s[0])}</button>`).join("")}</nav>${L.map((s,j)=>{const entry=courseEntries(g).filter(o=>canCourse(g,o.i))[j];const key=entry?courseProgressKey(g,entry.title):"";const legacy=entry?courseKey(g,entry.i):"";const done=entry&&courseDone(g,entry);return `<section class="mod" id="s${g}-${j}"><h3>${j+1}. ${esc(s[0])}</h3><label class="ck" style="display:inline-flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" data-course-done="${esc(key)}" data-course-legacy="${esc(legacy)}" ${done?"checked":""}> Cours terminé</label>${s[1]}</section>`}).join("")}</div>`}).join("")}
 function setProf(){prof=!prof;$("tp").textContent=prof?"👨‍🏫 Mode professeur : ACTIVÉ (cliquer pour quitter)":"👨‍🏫 Activer le mode professeur";$("tp").classList.toggle("on",prof);drawK()}
 $("lire").innerHTML=`<div class="fast"><div><i>📋</i><b>Onglet « Fiches de soins »</b><small>${D.length} situations concrètes : reconnaître le patient, soigner étape par étape, consulter les fiches pendant un RP.</small></div><div><i>🎓</i><b>Onglet « Autres » : les cours</b><small>La théorie est organisée par grade. Chaque cours peut être autorisé séparément par le gestionnaire des comptes.</small></div><div><i>👨‍🏫</i><b>Mode professeur</b><small>Affiche les réponses du quiz, les corrections des cas pratiques et la grille de notation de l'examen.</small></div></div><div class="gc" style="display:block;margin-top:12px"><b>Comment apprendre :</b><p style="color:var(--tx)">1. Lis les cours qui te sont autorisés. 2. Révise chaque cours. 3. Fais les quiz disponibles. 4. Présente-toi à l'examen quand tu coches toutes les compétences.</p><button class="chip" id="tp" onclick="setProf()" style="margin-top:6px">👨‍🏫 Activer le mode professeur</button></div>`;
 $("kl").addEventListener("click",e=>{const t=e.target.closest(".rp div");if(t){try{navigator.clipboard.writeText(t.textContent)}catch(_){}}});
@@ -633,7 +633,7 @@ function canFiche(title){return ALL_FICHES===true || (FICHE_ACCESS instanceof Se
 function hasAnyFiche(){return ALL_FICHES===true || (FICHE_ACCESS instanceof Set && FICHE_ACCESS.size>0)}
 function courseKey(g,i){return "course:"+String(g)+":"+String(i)}
 function courseProgressKey(g,title){return "progress:"+String(g)+":"+String(title||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}
-function courseDone(g,o){const pk=courseProgressKey(g,o.title);return COURSE_DONE.has(pk)||COURSE_DONE.has(courseKey(g,o.i))}
+function courseDone(g,o){return COURSE_DONE.has(courseProgressKey(g,o.title))||COURSE_DONE.has(courseKey(g,o.i))}
 function canCourse(g,i){return ALL_COURSES===true || (COURSE_ACCESS instanceof Set && COURSE_ACCESS.has(courseKey(g,i)))}
 function hasAnyCourse(){return ALL_COURSES===true || (COURSE_ACCESS instanceof Set && COURSE_ACCESS.size>0)}
 function courseEntries(g){
@@ -643,24 +643,44 @@ function courseEntries(g){
   return K.map((k,i)=>({k,i})).filter(o=>o.k[0]===g).map(o=>({i:o.i,title:o.k[1]}));
 }
 function formationData(){
-  // Chaque grade possède son propre compteur. Le total est toujours le nombre
-  // réel de cours présents dans ce grade : si un cours est ajouté, le /N augmente.
   const grades=[5,4,3,2,1,0].map(g=>{
-    const all=courseEntries(g);
-    const total=all.length;
-    const done=all.reduce((n,o)=>n+(courseDone(g,o)?1:0),0);
-    return {g,total,done,pct:total?Math.round(done/total*100):0};
+    const courses=courseEntries(g);
+    const total=courses.length;
+    let done=0;
+    courses.forEach(course=>{ if(courseDone(g,course)) done++; });
+    // Une validation = un seul cours. Le compteur ne peut jamais dépasser le total.
+    done=Math.max(0,Math.min(done,total));
+    const pct=total>0 ? Math.round((done*100)/total) : 0;
+    return {g,total,done,pct:Math.max(0,Math.min(100,pct))};
   });
-  const total=grades.reduce((n,x)=>n+x.total,0);
-  const done=grades.reduce((n,x)=>n+x.done,0);
-  return {grades,total,done,pct:total?Math.round(done/total*100):0};
+
+  // GLOBAL = somme des cours de chaque grade, jamais somme des pourcentages.
+  const total=grades.reduce((sum,grade)=>sum+grade.total,0);
+  const done=grades.reduce((sum,grade)=>sum+grade.done,0);
+  const pct=total>0 ? Math.round((done*100)/total) : 0;
+  return {grades,total,done,pct:Math.max(0,Math.min(100,pct))};
 }
 function renderFormation(){
   const el=$("formation"); if(!el)return;
   const d=formationData();
   const colors=["#d9a83b","#4b8cff","#55c47a","#d96b3b","#a878d9","#e15b78"];
-  const cards=d.grades.map(x=>{const g=G[x.g];return `<div class="formation-card" style="--grade:${colors[x.g]}"><div class="ft"><span class="fg">${esc(g[1])} ${esc(g[0])}</span><span class="fp">${x.pct}%</span></div><div class="fcount"><strong>${x.done}</strong><span> / ${x.total} cours</span></div><div class="mini"><i style="width:${x.pct}%"></i></div></div>`}).join("");
-  el.innerHTML=`<div class="formation-shell"><div class="formation-head"><div><h3 style="margin:0">🎓 Progression de la formation</h3><p class="mut" style="margin:4px 0 0">Chaque cours coché compte immédiatement.</p></div><div class="formation-total"><strong>${d.done} / ${d.total}</strong><span>${d.pct}%</span></div></div><div class="formation-bar"><i style="width:${d.pct}%"></i></div><div class="formation-grid">${cards||'<div class="formation-empty">Aucun cours accessible pour ce compte.</div>'}</div></div>`;
+  const cards=d.grades.map(x=>{
+    const g=G[x.g];
+    return `<div class="formation-card" style="--grade:${colors[x.g]}">
+      <div class="ft"><span class="fg">${esc(g[1])} ${esc(g[0])}</span><span class="fp">${x.pct}%</span></div>
+      <div class="fcount"><strong>${x.done} / ${x.total}</strong><span> cours terminés</span></div>
+      <div class="mini"><i style="width:${x.pct}%"></i></div>
+    </div>`;
+  }).join("");
+  el.innerHTML=`<div class="formation-shell">
+    <div class="formation-head">
+      <div><h3 style="margin:0">🎓 Progression de la formation</h3><p class="mut" style="margin:4px 0 0">Chaque grade est calculé séparément. Le global est calculé sur tous les cours.</p></div>
+      <div class="formation-total"><strong>${d.pct}%</strong><span>global · ${d.done} / ${d.total} cours</span></div>
+    </div>
+    <div class="formation-bar"><i style="width:${d.pct}%"></i></div>
+    <h4 class="formation-section-title">Progression par grade</h4>
+    <div class="formation-grid">${cards}</div>
+  </div>`;
 }
 function ok(){return hasAnyFiche()}
 function cfgOK(){return !/VOTRE/.test(SUPABASE_URL+SUPABASE_ANON_KEY)&&!!window.supabase}
@@ -683,7 +703,7 @@ $("lgb").onclick=async()=>{if(!cfgOK()){$("lgm").textContent="Site non configur�
 $("lgp").addEventListener("keydown",e=>{if(e.key==="Enter")$("lgb").click()});
 // ---- session et permissions
 async function loadSession(){const{data}=await sb.auth.getSession();const u=data.session&&data.session.user;ME=null;PERM=new Set();FICHE_ACCESS=new Set();COURSE_ACCESS=new Set();COURSE_DONE=new Set();ALL_FICHES=false;ALL_COURSES=false;
-if(u){const{data:p}=await sb.from("profiles").select("id,username,role").eq("id",u.id).maybeSingle();ME=p||{username:"compte",role:"?"};const r=await sb.rpc("my_permissions");PERM=new Set(r.data||[]);ALL_FICHES=ME.role==="admin"||ME.role==="mj";ALL_COURSES=ME.role==="admin"||ME.role==="mj";if(!ALL_FICHES){const a=await sb.from("fiche_access").select("fiche_key").eq("user_id",u.id);if(!a.error)FICHE_ACCESS=new Set((a.data||[]).map(x=>x.fiche_key))}if(!ALL_COURSES){const a=await sb.from("course_access").select("course_key").eq("user_id",u.id);if(!a.error)COURSE_ACCESS=new Set((a.data||[]).map(x=>x.course_key))}const cp=await sb.from("course_progress").select("course_key").eq("user_id",u.id);if(!cp.error)COURSE_DONE=new Set((cp.data||[]).map(x=>x.course_key))}
+if(u){const{data:p}=await sb.from("profiles").select("id,username,role").eq("id",u.id).maybeSingle();ME=p||{username:"compte",role:"?"};const r=await sb.rpc("my_permissions");PERM=new Set(r.data||[]);ALL_FICHES=ME.role==="admin"||ME.role==="mj";ALL_COURSES=ME.role==="admin"||ME.role==="mj";if(!ALL_FICHES){const a=await sb.from("fiche_access").select("fiche_key").eq("user_id",u.id);if(!a.error)FICHE_ACCESS=new Set((a.data||[]).map(x=>x.fiche_key))}if(!ALL_COURSES){const a=await sb.from("course_access").select("course_key").eq("user_id",u.id);if(!a.error)COURSE_ACCESS=new Set((a.data||[]).map(x=>x.course_key))}const cp=await sb.from("course_progress").select("course_key").eq("user_id",u.id);if(!cp.error){COURSE_DONE=new Set();(cp.data||[]).forEach(x=>{const key=String(x.course_key||"");if(key.startsWith("progress:")){COURSE_DONE.add(key);return}const m=key.match(/^course:(-?\d+):(\d+)$/);if(m){const g=Number(m[1]),i=Number(m[2]),entry=courseEntries(g).find(o=>o.i===i);COURSE_DONE.add(entry?courseProgressKey(g,entry.title):key)}else COURSE_DONE.add(key)})}}
 EDM=can("edit_dossiers")||can("edit_personnel");draw();lb.textContent=ME?"👤 "+ME.username+" · Déconnexion":"👤 Connexion";ab.hidden=!can("manage_accounts");renderD();renderP();show(cur)}
 // ---- dossiers
 const rowD=r=>({id:r.id,cl:r.clan,pn:r.prenom||"",nom:r.nom||"",age:r.age==null?"":String(r.age),sx:r.sexe||"",dn:r.date_naissance||"",ln:r.lieu_naissance||"",rs:r.residence||"",gs:r.groupe_sanguin||"",tr:r.traitements||"",al:r.allergies||"",ph:r.phobies||"",go:r.gouts||"",ants:(r.antecedents||[]).sort((a,b)=>a.position-b.position).map(a=>({t:a.type,d:a.date_txt||"",de:a.description||"",sm:a.suivi_medical||"",g:a.guerison||"En cours"}))});
@@ -732,7 +752,7 @@ ab.onclick=async()=>{
 $("cab").onclick=async()=>{const username=$("causer").value.trim(),password=$("capass").value,role=$("carole").value;$("cam").textContent="";if(!username){$("cam").textContent="Indiquez un identifiant.";return}if(!password||password.length<6){$("cam").textContent="Le mot de passe doit contenir au moins 6 caractères.";return}const{data:{session}}=await sb.auth.getSession();if(!session){$("cam").textContent="Vous devez être connecté en admin.";return}try{const r=await fetch(SUPABASE_URL+"/functions/v1/manage-account",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_ANON_KEY},body:JSON.stringify({username,password,role})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||"Erreur lors de la création du compte.");$("cam").style.color="#176b3a";$("cam").textContent=j.message||"Compte prêt.";$('causer').value="";$('capass').value="";await ab.onclick()}catch(e){$("cam").style.color="#a3182f";$("cam").textContent=e.message}};
 $("cml").addEventListener("click",async e=>{const b=e.target.closest(".fac");if(b)await openAccessManager(b.dataset.id,b.dataset.user,b.dataset.kind)});
 $("cml").addEventListener("change",async e=>{const s=e.target.closest("select");if(!s)return;const r=await sb.from("profiles").update({role:s.value}).eq("id",s.dataset.id);if(r.error)alert("Refusé : "+r.error.message);else await ab.onclick()});
-async function setCourseDone(key,done){
+async function setCourseDone(key,done,legacyKey){
   if(!ME||!ME.id||!sb)return;
   const uid=ME.id;
   if(done){
@@ -740,9 +760,13 @@ async function setCourseDone(key,done){
     if(r.error && r.error.code!=="23505")throw r.error;
     COURSE_DONE.add(key);
   }else{
-    // Supprime aussi l'ancien format course:g:i pour les anciennes données.
-    const r=await sb.from("course_progress").delete().eq("user_id",uid).eq("course_key",key);
+    let r=await sb.from("course_progress").delete().eq("user_id",uid).eq("course_key",key);
     if(r.error)throw r.error;
+    if(legacyKey){
+      r=await sb.from("course_progress").delete().eq("user_id",uid).eq("course_key",legacyKey);
+      if(r.error)throw r.error;
+      COURSE_DONE.delete(legacyKey);
+    }
     COURSE_DONE.delete(key);
   }
   drawK();
@@ -750,11 +774,11 @@ async function setCourseDone(key,done){
 }
 $("kl").addEventListener("change",e=>{
   const x=e.target.closest("input[data-course-done]");if(!x)return;
-  const key=x.dataset.courseDone,next=x.checked;
+  const key=x.dataset.courseDone,legacyKey=x.dataset.courseLegacy,next=x.checked;
   if(next) COURSE_DONE.add(key); else COURSE_DONE.delete(key);
   // Mise à jour immédiate : X/N du grade concerné + barre.
   renderFormation();
-  setCourseDone(key,next).catch(err=>{
+  setCourseDone(key,next,legacyKey).catch(err=>{
     if(next) COURSE_DONE.delete(key); else COURSE_DONE.add(key);
     drawK();renderFormation();
     console.error(err);
