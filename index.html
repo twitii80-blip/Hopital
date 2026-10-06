@@ -516,7 +516,7 @@ const quiz=Q.map((q,i)=>`<div class="qq"><h4>${i+1}. ${esc(q[0])}</h4>${q[1].map
 L.push(["Quiz de fin de cours",`<p class="in">${prof?"Mode professeur : les bonnes réponses sont indiquées par ✔ avec leur explication.":"8 questions. Cliquez une réponse : elle devient verte si elle est juste, rouge sinon, avec une explication."}</p>${quiz}`]);
 const ex=prof?`<p class="in">Grille de notation sur 20. Seuil de réussite : 14/20. Chaque critère rapporte 1 point.</p>${EP.map(e=>`<h4>${esc(e[0])} (${e[2].reduce((a,c)=>a+c[1],0)} pts)</h4><p class="tb">${esc(e[1])}</p><ul>${e[2].map(c=>`<li>${esc(c[0])} : ${c[1]} pt</li>`).join("")}</ul>`).join("")}<div class="tip">⛔ <b>Fautes éliminatoires :</b> ${ELIM.map(esc).join(" ; ")}.</div>`:`<p class="in">L'examen comprend 3 épreuves pratiques et une observation générale, notées sur 20 (seuil : 14/20). Coche ce que vous maîtrisez avant de vous présenter.</p>${EP.slice(0,3).map(e=>`<p class="tb"><b>${esc(e[0])}</b> : ${esc(e[1])}</p>`).join("")}<div class="exc">${EX.map(e=>`<label class="ck"><input type="checkbox" onchange="exn()"> ${esc(e)}</label>`).join("")}<p class="tb"><b id="exc">0 / ${EX.length}</b></p></div>`;
 L.push(["Examen pour passer Infirmier",ex]);return L}
-function drawK(){const order=[5,4,3,2,1,0];$("kl").innerHTML=order.filter(g=>gsel<0||g===gsel).map(g=>{const c=CH[g];let L=g===5?SX():g===4?IX():g===3?MX3():K.map((k,i)=>({k,i})).filter(o=>o.k[0]===g).map(({k,i})=>{const x=X[i];return [k[1],`<p class="in">${esc(k[2])}</p>${x[0].map(p=>`<p class="tb">${esc(p)}</p>`).join("")}<p class="tb">${esc("Concrètement, on procède dans cet ordre : "+k[3].map(lc).join(", puis ")+".")}</p><p class="tb">${esc("Quelques erreurs reviennent souvent : "+jn(x[1].map(lc))+".")}</p>`]});const all=L;L=all.map((item,i)=>({item,i})).filter(o=>canCourse(g,o.i)).map(o=>o.item);if(!L.length)return "";return `<div class="chp"><div class="chh"><span class="rk">${c[0]} · ${G[g][0]}</span><h3>${c[1]}</h3><p>${c[2]}</p></div><nav class="som"><b>Cours accessibles</b>${L.map((s,j)=>`<button class="chip" onclick="document.getElementById('s${g}-${j}').scrollIntoView({behavior:'smooth'})">${j+1}. ${esc(s[0])}</button>`).join("")}</nav>${L.map((s,j)=>{const entry=courseEntries(g).filter(o=>canCourse(g,o.i))[j];const key=entry?courseKey(g,entry.i):"";const done=key&&COURSE_DONE.has(key);return `<section class="mod" id="s${g}-${j}"><h3>${j+1}. ${esc(s[0])}</h3><label class="ck" style="display:inline-flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" data-course-done="${esc(key)}" ${done?"checked":""}> Cours terminé</label>${s[1]}</section>`}).join("")}</div>`}).join("")}
+function drawK(){const order=[5,4,3,2,1,0];$("kl").innerHTML=order.filter(g=>gsel<0||g===gsel).map(g=>{const c=CH[g];let L=g===5?SX():g===4?IX():g===3?MX3():K.map((k,i)=>({k,i})).filter(o=>o.k[0]===g).map(({k,i})=>{const x=X[i];return [k[1],`<p class="in">${esc(k[2])}</p>${x[0].map(p=>`<p class="tb">${esc(p)}</p>`).join("")}<p class="tb">${esc("Concrètement, on procède dans cet ordre : "+k[3].map(lc).join(", puis ")+".")}</p><p class="tb">${esc("Quelques erreurs reviennent souvent : "+jn(x[1].map(lc))+".")}</p>`]});const all=L;L=all.map((item,i)=>({item,i})).filter(o=>canCourse(g,o.i)).map(o=>o.item);if(!L.length)return "";return `<div class="chp"><div class="chh"><span class="rk">${c[0]} · ${G[g][0]}</span><h3>${c[1]}</h3><p>${c[2]}</p></div><nav class="som"><b>Cours accessibles</b>${L.map((s,j)=>`<button class="chip" onclick="document.getElementById('s${g}-${j}').scrollIntoView({behavior:'smooth'})">${j+1}. ${esc(s[0])}</button>`).join("")}</nav>${L.map((s,j)=>{const entry=courseEntries(g).filter(o=>canCourse(g,o.i))[j];const key=entry?courseProgressKey(g,entry.title):"";const done=entry&&courseDone(g,entry);return `<section class="mod" id="s${g}-${j}"><h3>${j+1}. ${esc(s[0])}</h3><label class="ck" style="display:inline-flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" data-course-done="${esc(key)}" ${done?"checked":""}> Cours terminé</label>${s[1]}</section>`}).join("")}</div>`}).join("")}
 function setProf(){prof=!prof;$("tp").textContent=prof?"👨‍🏫 Mode professeur : ACTIVÉ (cliquer pour quitter)":"👨‍🏫 Activer le mode professeur";$("tp").classList.toggle("on",prof);drawK()}
 $("lire").innerHTML=`<div class="fast"><div><i>📋</i><b>Onglet « Fiches de soins »</b><small>${D.length} situations concrètes : reconnaître le patient, soigner étape par étape, consulter les fiches pendant un RP.</small></div><div><i>🎓</i><b>Onglet « Autres » : les cours</b><small>La théorie est organisée par grade. Chaque cours peut être autorisé séparément par le gestionnaire des comptes.</small></div><div><i>👨‍🏫</i><b>Mode professeur</b><small>Affiche les réponses du quiz, les corrections des cas pratiques et la grille de notation de l'examen.</small></div></div><div class="gc" style="display:block;margin-top:12px"><b>Comment apprendre :</b><p style="color:var(--tx)">1. Lis les cours qui te sont autorisés. 2. Révise chaque cours. 3. Fais les quiz disponibles. 4. Présente-toi à l'examen quand tu coches toutes les compétences.</p><button class="chip" id="tp" onclick="setProf()" style="margin-top:6px">👨‍🏫 Activer le mode professeur</button></div>`;
 $("kl").addEventListener("click",e=>{const t=e.target.closest(".rp div");if(t){try{navigator.clipboard.writeText(t.textContent)}catch(_){}}});
@@ -632,6 +632,8 @@ function ficheKey(title){return "fiche:"+String(title||"").normalize("NFD").repl
 function canFiche(title){return ALL_FICHES===true || (FICHE_ACCESS instanceof Set && FICHE_ACCESS.has(ficheKey(title)))}
 function hasAnyFiche(){return ALL_FICHES===true || (FICHE_ACCESS instanceof Set && FICHE_ACCESS.size>0)}
 function courseKey(g,i){return "course:"+String(g)+":"+String(i)}
+function courseProgressKey(g,title){return "progress:"+String(g)+":"+String(title||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}
+function courseDone(g,o){const pk=courseProgressKey(g,o.title);return COURSE_DONE.has(pk)||COURSE_DONE.has(courseKey(g,o.i))}
 function canCourse(g,i){return ALL_COURSES===true || (COURSE_ACCESS instanceof Set && COURSE_ACCESS.has(courseKey(g,i)))}
 function hasAnyCourse(){return ALL_COURSES===true || (COURSE_ACCESS instanceof Set && COURSE_ACCESS.size>0)}
 function courseEntries(g){
@@ -641,15 +643,16 @@ function courseEntries(g){
   return K.map((k,i)=>({k,i})).filter(o=>o.k[0]===g).map(o=>({i:o.i,title:o.k[1]}));
 }
 function formationData(){
-  // La progression est calculée sur TOUS les cours de la formation.
-  // Les droits d'accès servent uniquement à déterminer quels cours peuvent être cochés.
+  // Chaque grade possède son propre compteur. Le total est toujours le nombre
+  // réel de cours présents dans ce grade : si un cours est ajouté, le /N augmente.
   const grades=[5,4,3,2,1,0].map(g=>{
     const all=courseEntries(g);
     const total=all.length;
-    const done=all.reduce((n,o)=>n+(canCourse(g,o.i)&&COURSE_DONE.has(courseKey(g,o.i))?1:0),0);
+    const done=all.reduce((n,o)=>n+(courseDone(g,o)?1:0),0);
     return {g,total,done,pct:total?Math.round(done/total*100):0};
   });
-  const total=grades.reduce((n,x)=>n+x.total,0),done=grades.reduce((n,x)=>n+x.done,0);
+  const total=grades.reduce((n,x)=>n+x.total,0);
+  const done=grades.reduce((n,x)=>n+x.done,0);
   return {grades,total,done,pct:total?Math.round(done/total*100):0};
 }
 function renderFormation(){
@@ -737,22 +740,23 @@ async function setCourseDone(key,done){
     if(r.error && r.error.code!=="23505")throw r.error;
     COURSE_DONE.add(key);
   }else{
+    // Supprime aussi l'ancien format course:g:i pour les anciennes données.
     const r=await sb.from("course_progress").delete().eq("user_id",uid).eq("course_key",key);
     if(r.error)throw r.error;
     COURSE_DONE.delete(key);
   }
   drawK();
   renderFormation();
-  renderP();
 }
 $("kl").addEventListener("change",e=>{
   const x=e.target.closest("input[data-course-done]");if(!x)return;
-  const key=x.dataset.courseDone, next=x.checked;
+  const key=x.dataset.courseDone,next=x.checked;
   if(next) COURSE_DONE.add(key); else COURSE_DONE.delete(key);
+  // Mise à jour immédiate : X/N du grade concerné + barre.
   renderFormation();
   setCourseDone(key,next).catch(err=>{
     if(next) COURSE_DONE.delete(key); else COURSE_DONE.add(key);
-    drawK();renderFormation();renderP();
+    drawK();renderFormation();
     console.error(err);
     alert("Impossible d'enregistrer la progression. Vérifie que la table course_progress existe dans Supabase et que ses règles RLS sont appliquées.");
   });
